@@ -1,0 +1,40 @@
+package com.example.agentic;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import java.util.Map;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@SpringBootTest @AutoConfigureMockMvc
+class ApiIntegrationTest {
+    @Autowired MockMvc mvc; @Autowired ObjectMapper json;
+    @Test void createsAndRetrievesPersistentLink() throws Exception {
+        mvc.perform(post("/api/links").contentType(MediaType.APPLICATION_JSON).header("X-Actor","qa-agent").content(json.writeValueAsString(Map.of("url","https://example.com/docs","customCode","testlink")))).andExpect(status().isCreated()).andExpect(jsonPath("$.code").value("testlink"));
+        mvc.perform(get("/api/links/testlink")).andExpect(status().isOk()).andExpect(jsonPath("$.targetUrl").value("https://example.com/docs"));
+    }
+    @Test void rejectsUnsafeUrl() throws Exception { mvc.perform(post("/api/links").contentType(MediaType.APPLICATION_JSON).content("{\"url\":\"file:///secret\",\"customCode\":\"unsafe1\"}")).andExpect(status().isBadRequest()).andExpect(jsonPath("$.title").value("invalid_url")); }
+    @Test void greenfieldSynchronizesAtHumanReleaseGate() throws Exception {
+        var created=mvc.perform(post("/api/workflows").contentType(MediaType.APPLICATION_JSON).header("X-Actor","candidate").content("{\"scenario\":\"greenfield\",\"requirement\":\"Build a secure URL shortener\"}")).andExpect(status().isOk()).andReturn();
+        var id=json.readTree(created.getResponse().getContentAsString()).get("id").asText();
+        var advanced=mvc.perform(post("/api/workflows/"+id+"/advance").header("X-Actor","agent-orchestrator")).andExpect(status().isOk()).andExpect(jsonPath("$.status").value("AWAITING_APPROVAL")).andExpect(jsonPath("$.steps.qa.status").value("SUCCEEDED")).andExpect(jsonPath("$.steps.documentation.status").value("SUCCEEDED")).andReturn();
+        assertThat(advanced.getResponse().getContentAsString()).contains("grounded-chunks=3");
+    }
+    @Test void ambiguousRequirementStopsBeforeAgentExecution() throws Exception {
+        var created=mvc.perform(post("/api/workflows").contentType(MediaType.APPLICATION_JSON).header("X-Actor","candidate").content("{\"scenario\":\"ambiguous\",\"requirement\":\"Make links smart\"}")).andReturn();
+        var id=json.readTree(created.getResponse().getContentAsString()).get("id").asText();
+        mvc.perform(post("/api/workflows/"+id+"/advance").header("X-Actor","candidate")).andExpect(jsonPath("$.status").value("AWAITING_APPROVAL")).andExpect(jsonPath("$.steps.requirements.status").value("AWAITING_APPROVAL"));
+    }
+    @Test void primaryFailureUsesFallback() throws Exception {
+        var created=mvc.perform(post("/api/workflows").contentType(MediaType.APPLICATION_JSON).header("X-Actor","candidate").content("{\"scenario\":\"greenfield\",\"requirement\":\"Modernize safely [simulate-failure]\"}")).andReturn();
+        var id=json.readTree(created.getResponse().getContentAsString()).get("id").asText();
+        mvc.perform(post("/api/workflows/"+id+"/advance").header("X-Actor","identified-agent")).andExpect(status().isOk()).andExpect(jsonPath("$.steps.requirements.fallbackUsed").value(true)).andExpect(jsonPath("$.steps.requirements.attempts").value(2));
+    }
+    @Test void exposesHonestCapabilities() throws Exception { mvc.perform(get("/api/capabilities")).andExpect(status().isOk()).andExpect(jsonPath("$.llm.mode").value("DEMO")).andExpect(jsonPath("$.rag.enabled").value(true)).andExpect(jsonPath("$.fallback").value(true)); }
+}
