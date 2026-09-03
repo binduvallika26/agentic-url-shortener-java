@@ -3,3 +3,9 @@ textarea { margin-bottom: 6px; }
 .metric-note { color: var(--muted); font-size: 11px; line-height: 1.45; }
 .field-help { margin: 0 0 16px; }
 .metric-note { margin: 12px 0 0; }
+.panel,
+.hero-card {
+  background: linear-gradient(145deg, #142722, #091411);
+  backdrop-filter: none;
+  isolation: isolate;
+}
