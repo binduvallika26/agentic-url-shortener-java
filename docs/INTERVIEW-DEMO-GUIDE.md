@@ -14,7 +14,7 @@ cd C:\Users\bindu\Assignment-Agentic\agentic-url-shortener-java
 Confirm that the output contains:
 
 ```text
-Tests run: 9, Failures: 0, Errors: 0
+Tests run: 10, Failures: 0, Errors: 0
 BUILD SUCCESS
 ```
 
@@ -129,11 +129,13 @@ Click **Launch agent workflow**, then **Execute ready agents**.
 
 Confirm that Requirements becomes `AWAITING_APPROVAL` before agent execution continues.
 
+This is a deliberate pause, not a background job. It will remain in this state until a human acts.
+
 Say:
 
 > The phrase “smart” is not sufficiently defined. It might mean analytics, personalized redirects, automatic expiration, or user tracking. The system does not invent product or privacy scope. It stops for stakeholder clarification, demonstrating controlled autonomy.
 
-For the short interview path, leave this scenario paused after explaining the gate.
+For the short interview path, leave this scenario paused after explaining the gate. To continue it, replace the vague text with a clear requirement, click **Replan edited requirement**, click **Execute ready agents** to reach the refreshed Requirements gate, click **Approve clarified requirement**, and click **Execute ready agents** again.
 
 ## 7. Retry and fallback
 
@@ -152,7 +154,7 @@ Say:
 
 > The primary Development agent is intentionally unavailable. The orchestrator performs two bounded attempts and then invokes a conservative review-only fallback. Other agents remain unaffected. This prevents infinite retries and uncontrolled execution.
 
-A fresh fallback demonstration adds exactly two primary attempts and one fallback step to the cumulative metrics.
+A fresh fallback demonstration shows two total primary attempts. Because the retry metric counts attempts after the first, it adds one retry and one fallback step to the cumulative metrics.
 
 ## 8. Dynamic replanning
 
@@ -163,6 +165,14 @@ Build a secure URL shortener with aliases, expiration, analytics, audit logging,
 ```
 
 Click **Replan edited requirement**.
+
+Expected results:
+
+- The same workflow ID remains, so **Total runs does not increase**.
+- The revision increases by one.
+- The new **Replans** metric increases by one.
+- Previous step outputs and approvals are cleared.
+- For an Ambiguous scenario, click **Execute ready agents**, then **Approve clarified requirement**, then **Execute ready agents** again.
 
 Say:
 
@@ -219,6 +229,7 @@ Show **Reliability** and explain:
 
 - **Total runs:** All persisted workflow executions
 - **Successful completion:** Percentage of runs that reached `SUCCEEDED`
+- **Replans:** Number of upstream requirement revisions across stored runs
 - **Retry attempts:** Attempts beyond the first execution attempt
 - **Fallback steps:** Individual stages completed using fallback
 - **Runs rolled back:** Percentage of runs explicitly rolled back
@@ -230,7 +241,7 @@ Say:
 
 Show **Audit Timeline** and say:
 
-> Every important action records the actor, action, outcome, timestamp, resource, and correlation identifier. This provides traceability across user, workflow, and product operations.
+> Every important action records the actor, action, outcome, timestamp, resource, and correlation identifier. The Accountable reviewer field controls the actor name for workflow and link-creation actions. Public short-link visits appear as anonymous because redirect visitors do not provide an authenticated identity.
 
 ## 12. Swagger, health, and tests
 
@@ -240,7 +251,7 @@ Open the health endpoint and confirm that the application is `UP`.
 
 Show the successful test output and JaCoCo report. Say:
 
-> The nine automated tests cover the real Spring, HTTP, and JPA stack; secure URL validation; graph topology; parallel-path synchronization; release approval; ambiguous-requirement gating; local retrieval grounding; bounded retries; and explicit fallback behavior.
+> The ten automated tests cover the real Spring, HTTP, and JPA stack; redirect visit counting; secure URL validation; graph topology; parallel-path synchronization; release approval; ambiguous-requirement gating; replanning metrics; local retrieval grounding; bounded retries; and explicit fallback behavior.
 
 ## 13. Limitations and production path
 

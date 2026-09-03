@@ -18,6 +18,8 @@ class ApiIntegrationTest {
     @Test void createsAndRetrievesPersistentLink() throws Exception {
         mvc.perform(post("/api/links").contentType(MediaType.APPLICATION_JSON).header("X-Actor","qa-agent").content(json.writeValueAsString(Map.of("url","https://example.com/docs","customCode","testlink")))).andExpect(status().isCreated()).andExpect(jsonPath("$.code").value("testlink"));
         mvc.perform(get("/api/links/testlink")).andExpect(status().isOk()).andExpect(jsonPath("$.targetUrl").value("https://example.com/docs"));
+        mvc.perform(get("/testlink")).andExpect(status().isFound()).andExpect(header().string("Location","https://example.com/docs"));
+        mvc.perform(get("/api/links/testlink")).andExpect(status().isOk()).andExpect(jsonPath("$.visits").value(1));
     }
     @Test void rejectsUnsafeUrl() throws Exception { mvc.perform(post("/api/links").contentType(MediaType.APPLICATION_JSON).content("{\"url\":\"file:///secret\",\"customCode\":\"unsafe1\"}")).andExpect(status().isBadRequest()).andExpect(jsonPath("$.title").value("invalid_url")); }
     @Test void greenfieldSynchronizesAtHumanReleaseGate() throws Exception {
@@ -37,4 +39,13 @@ class ApiIntegrationTest {
         mvc.perform(post("/api/workflows/"+id+"/advance").header("X-Actor","identified-agent")).andExpect(status().isOk()).andExpect(jsonPath("$.steps.requirements.fallbackUsed").value(false)).andExpect(jsonPath("$.steps.development.fallbackUsed").value(true)).andExpect(jsonPath("$.steps.development.attempts").value(2));
     }
     @Test void exposesHonestCapabilities() throws Exception { mvc.perform(get("/api/capabilities")).andExpect(status().isOk()).andExpect(jsonPath("$.llm.mode").value("DEMO")).andExpect(jsonPath("$.rag.enabled").value(true)).andExpect(jsonPath("$.fallback").value(true)); }
+    @Test void replanIsCountedWithoutCreatingAnotherRun() throws Exception {
+        var created=mvc.perform(post("/api/workflows").contentType(MediaType.APPLICATION_JSON).header("X-Actor","Bindu Vallika").content("{\"scenario\":\"ambiguous\",\"requirement\":\"Make links smart\"}")).andReturn();
+        var createdJson=json.readTree(created.getResponse().getContentAsString());
+        var id=createdJson.get("id").asText();
+        var initialRevision=createdJson.get("revision").asInt();
+        mvc.perform(post("/api/workflows/"+id+"/replan").contentType(MediaType.APPLICATION_JSON).header("X-Actor","Bindu Vallika").content("{\"requirement\":\"Add user-selected expiration to new links\"}")).andExpect(status().isOk()).andExpect(jsonPath("$.revision").value(initialRevision+1));
+        var metrics=mvc.perform(get("/api/metrics")).andExpect(status().isOk()).andExpect(jsonPath("$.replans").isNumber()).andReturn();
+        assertThat(json.readTree(metrics.getResponse().getContentAsString()).get("replans").asInt()).isGreaterThanOrEqualTo(1);
+    }
 }

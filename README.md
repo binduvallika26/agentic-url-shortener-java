@@ -36,7 +36,7 @@ The LangChain4j adapter then invokes the configured model. Do not commit keys. T
 .\scripts\test.ps1
 ```
 
-Current result: 9 tests, 0 failures; 70.3% instruction coverage and 49.6% branch coverage across 34 compiled classes. Tests cover the real Spring/JPA/HTTP stack, URL policy, RAG retrieval, graph topology, ambiguity gate, synchronized release gate, and retry-to-fallback behavior.
+Current result: 10 tests, 0 failures; 80.9% instruction coverage and 55.0% branch coverage across 34 compiled classes. Tests cover the real Spring/JPA/HTTP stack, redirect visit counting, URL policy, RAG retrieval, graph topology, ambiguity gate, replanning metrics, synchronized release gate, and retry-to-fallback behavior.
 
 ## Demo sequence
 
