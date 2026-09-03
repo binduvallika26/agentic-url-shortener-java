@@ -1,0 +1,5 @@
+textarea { margin-bottom: 6px; }
+.field-help,
+.metric-note { color: var(--muted); font-size: 11px; line-height: 1.45; }
+.field-help { margin: 0 0 16px; }
+.metric-note { margin: 12px 0 0; }

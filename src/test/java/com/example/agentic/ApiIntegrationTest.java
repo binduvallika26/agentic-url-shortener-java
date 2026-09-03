@@ -32,9 +32,9 @@ class ApiIntegrationTest {
         mvc.perform(post("/api/workflows/"+id+"/advance").header("X-Actor","candidate")).andExpect(jsonPath("$.status").value("AWAITING_APPROVAL")).andExpect(jsonPath("$.steps.requirements.status").value("AWAITING_APPROVAL"));
     }
     @Test void primaryFailureUsesFallback() throws Exception {
-        var created=mvc.perform(post("/api/workflows").contentType(MediaType.APPLICATION_JSON).header("X-Actor","candidate").content("{\"scenario\":\"greenfield\",\"requirement\":\"Modernize safely [simulate-failure]\"}")).andReturn();
+        var created=mvc.perform(post("/api/workflows").contentType(MediaType.APPLICATION_JSON).header("X-Actor","candidate").content("{\"scenario\":\"greenfield\",\"requirement\":\"Modernize safely [simulate-development-failure]\"}")).andReturn();
         var id=json.readTree(created.getResponse().getContentAsString()).get("id").asText();
-        mvc.perform(post("/api/workflows/"+id+"/advance").header("X-Actor","identified-agent")).andExpect(status().isOk()).andExpect(jsonPath("$.steps.requirements.fallbackUsed").value(true)).andExpect(jsonPath("$.steps.requirements.attempts").value(2));
+        mvc.perform(post("/api/workflows/"+id+"/advance").header("X-Actor","identified-agent")).andExpect(status().isOk()).andExpect(jsonPath("$.steps.requirements.fallbackUsed").value(false)).andExpect(jsonPath("$.steps.development.fallbackUsed").value(true)).andExpect(jsonPath("$.steps.development.attempts").value(2));
     }
     @Test void exposesHonestCapabilities() throws Exception { mvc.perform(get("/api/capabilities")).andExpect(status().isOk()).andExpect(jsonPath("$.llm.mode").value("DEMO")).andExpect(jsonPath("$.rag.enabled").value(true)).andExpect(jsonPath("$.fallback").value(true)); }
 }
