@@ -56,4 +56,4 @@ Current result: 9 tests, 0 failures; 70.3% instruction coverage and 49.6% branch
 - Vector database: not claimed. `KnowledgeService` is the replacement seam for a LangChain4j embedding store or enterprise vector database.
 - MCP: not currently connected; an MCP tool adapter is a documented extension rather than a false claim.
 
-See [architecture](docs/ARCHITECTURE.md) and [demo guide](docs/DEMO.md).
+See [architecture](docs/ARCHITECTURE.md), the [short demo guide](docs/DEMO.md), and the [complete interview demo script](docs/INTERVIEW-DEMO-GUIDE.md).
