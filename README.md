@@ -36,7 +36,7 @@ The LangChain4j adapter then invokes the configured model. Do not commit keys. T
 .\scripts\test.ps1
 ```
 
-Current result: 16 tests, 0 failures; 87.7% instruction coverage and 65.4% branch coverage. Tests cover the real Spring/JPA/HTTP stack, redirect visit counting, expiry and private-network URL policy, RAG retrieval, graph topology, ambiguity gates, scenario/scope validation, the artifact catalog, accountable approvals, final summaries, replanning metrics, synchronized release, rollback, bounded retry/fallback, and safe-stop behavior.
+Current result: 28 tests, 0 failures; 96.2% instruction coverage and 78.5% branch coverage. Maven enforces a 96% instruction-coverage quality gate during `verify`. Tests cover the real Spring/JPA/HTTP stack, redirect visit counting, generated and custom codes, conflicts, missing and expired links, private-network URL policy, RAG retrieval, graph topology, ambiguity gates, scenario/scope validation, artifact availability, accountable approvals, final summaries, replanning and recovery metrics, synchronized release, rollback, bounded retry/fallback, and safe-stop behavior.
 
 ## Demo sequence
 

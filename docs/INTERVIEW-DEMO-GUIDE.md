@@ -14,7 +14,7 @@ cd C:\Users\bindu\Assignment-Agentic\agentic-url-shortener-java
 Confirm that the output contains:
 
 ```text
-Tests run: 16, Failures: 0, Errors: 0
+Tests run: 28, Failures: 0, Errors: 0
 BUILD SUCCESS
 ```
 
