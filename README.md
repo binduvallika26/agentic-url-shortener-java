@@ -57,4 +57,4 @@ Current result: 28 tests, 0 failures; 96.2% instruction coverage and 78.5% branc
 - MCP: not currently connected; an MCP tool adapter is a documented extension rather than a false claim.
 - Agent artifacts: evidence links open a read-only, allowlisted view of real source, documentation, test, and coverage files. The demo does not claim that deterministic agents generated deployable code during the workflow.
 
-See [architecture](docs/ARCHITECTURE.md), the [short demo guide](docs/DEMO.md), and the [complete interview demo script](docs/INTERVIEW-DEMO-GUIDE.md).
+See [architecture](docs/ARCHITECTURE.md), the [short demo guide](docs/DEMO.md), the [complete interview demo script](docs/INTERVIEW-DEMO-GUIDE.md), and the [exact test and interview walkthrough](docs/INTERVIEW-TEST-AND-DEMO.md).
