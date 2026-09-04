@@ -37,7 +37,7 @@ public class LangChainEngineeringAgent implements AgentExecutor {
             case "development"->"Identified the concrete implementation seam in LinkService and SecureUrlPolicy; repository source is attached as inspectable evidence rather than claiming a newly generated change.";
             case "security"->"Reviewed scheme and host validation, loopback rejection, expiration behavior, actor attribution, and change-control gates; production DNS rebinding and abuse controls remain documented risks.";
             case "qa"->testSummary();
-            case "documentation"->"Attached the maintained README, architecture record, and interview guide as real repository artifacts.";
+            case "documentation"->"Documented setup, API behavior, architecture decisions, validation steps, risks, and operational limitations.";
             default->"Synchronized QA, security, and documentation evidence. Release remains an accountable human decision and does not claim deployment occurred.";
         };
     }
@@ -86,7 +86,7 @@ public class LangChainEngineeringAgent implements AgentExecutor {
             case "development"->List.of("link-service");
             case "security"->List.of("url-policy");
             case "qa"->List.of("api-tests","test-report","coverage-report");
-            case "documentation"->List.of("demo-guide");
+            case "documentation"->List.of();
             default->List.of("build-contract","test-report","coverage-report");
         };
     }
