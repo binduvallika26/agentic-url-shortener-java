@@ -36,13 +36,13 @@ The LangChain4j adapter then invokes the configured model. Do not commit keys. T
 .\scripts\test.ps1
 ```
 
-Current result: 10 tests, 0 failures; 80.9% instruction coverage and 55.0% branch coverage across 34 compiled classes. Tests cover the real Spring/JPA/HTTP stack, redirect visit counting, URL policy, RAG retrieval, graph topology, ambiguity gate, replanning metrics, synchronized release gate, and retry-to-fallback behavior.
+Current result: 12 tests, 0 failures; 80.0% instruction coverage and 55.9% branch coverage. Tests cover the real Spring/JPA/HTTP stack, redirect visit counting, URL policy, RAG retrieval, graph topology, ambiguity gates, scenario/scope validation, the artifact catalog, replanning metrics, synchronized release gates, and retry-to-fallback behavior.
 
 ## Demo sequence
 
 1. Open the dashboard and show the capability badge (`DEMO` or `CONNECTED`).
 2. Launch Greenfield, click **Execute ready agents**, and show the release approval stop.
-3. Inspect grounded agent evidence, risks, and the three synchronized branches.
+3. Inspect grounded agent evidence, risks, and links to real repository artifacts and test reports.
 4. Click **Approve waiting gate**, then execute again to finish.
 5. Click **Demo fallback**, launch, and execute to show two primary attempts plus fallback evidence.
 6. Create a short link and open it; show audit and metrics updates.
@@ -55,5 +55,6 @@ Current result: 10 tests, 0 failures; 80.9% instruction coverage and 55.0% branc
 - RAG: implemented as local lexical retrieval over an indexed engineering corpus; retrieved chunks are inserted into prompts and recorded in agent results.
 - Vector database: not claimed. `KnowledgeService` is the replacement seam for a LangChain4j embedding store or enterprise vector database.
 - MCP: not currently connected; an MCP tool adapter is a documented extension rather than a false claim.
+- Agent artifacts: evidence links open a read-only, allowlisted view of real source, documentation, test, and coverage files. The demo does not claim that deterministic agents generated deployable code during the workflow.
 
 See [architecture](docs/ARCHITECTURE.md), the [short demo guide](docs/DEMO.md), and the [complete interview demo script](docs/INTERVIEW-DEMO-GUIDE.md).

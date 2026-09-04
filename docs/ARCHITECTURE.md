@@ -50,6 +50,8 @@ flowchart TD
 - **H2 default:** zero-setup interview reliability with a direct migration path through Spring Data JPA.
 - **Optional LLM:** a missing/failed credential never blocks the core demo; the UI discloses the active execution mode.
 - **Local RAG:** deterministic evidence grounding without secrets. It is intentionally not described as vector search.
+- **Scenario and scope policy:** requirements outside the URL/link-service domain and clear Greenfield/Brownfield mismatches are rejected before a workflow is persisted.
+- **Evidence catalog:** stage outputs reference stable artifact IDs. A read-only allowlist maps those IDs to real repository files and generated Maven/JaCoCo reports without exposing arbitrary filesystem access.
 
 ## Extension seams
 

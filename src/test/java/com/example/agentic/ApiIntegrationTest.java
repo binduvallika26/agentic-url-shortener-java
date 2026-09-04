@@ -34,11 +34,21 @@ class ApiIntegrationTest {
         mvc.perform(post("/api/workflows/"+id+"/advance").header("X-Actor","candidate")).andExpect(jsonPath("$.status").value("AWAITING_APPROVAL")).andExpect(jsonPath("$.steps.requirements.status").value("AWAITING_APPROVAL"));
     }
     @Test void primaryFailureUsesFallback() throws Exception {
-        var created=mvc.perform(post("/api/workflows").contentType(MediaType.APPLICATION_JSON).header("X-Actor","candidate").content("{\"scenario\":\"greenfield\",\"requirement\":\"Modernize safely [simulate-development-failure]\"}")).andReturn();
+        var created=mvc.perform(post("/api/workflows").contentType(MediaType.APPLICATION_JSON).header("X-Actor","candidate").content("{\"scenario\":\"greenfield\",\"requirement\":\"Modernize the URL service safely [simulate-development-failure]\"}")).andReturn();
         var id=json.readTree(created.getResponse().getContentAsString()).get("id").asText();
         mvc.perform(post("/api/workflows/"+id+"/advance").header("X-Actor","identified-agent")).andExpect(status().isOk()).andExpect(jsonPath("$.steps.requirements.fallbackUsed").value(false)).andExpect(jsonPath("$.steps.development.fallbackUsed").value(true)).andExpect(jsonPath("$.steps.development.attempts").value(2));
     }
     @Test void exposesHonestCapabilities() throws Exception { mvc.perform(get("/api/capabilities")).andExpect(status().isOk()).andExpect(jsonPath("$.llm.mode").value("DEMO")).andExpect(jsonPath("$.rag.enabled").value(true)).andExpect(jsonPath("$.fallback").value(true)); }
+    @Test void rejectsOutOfScopeAndScenarioMismatchRequirements() throws Exception {
+        mvc.perform(post("/api/workflows").contentType(MediaType.APPLICATION_JSON).header("X-Actor","Bindu Vallika").content("{\"scenario\":\"brownfield\",\"requirement\":\"Build a snake game and open it in a new page\"}"))
+                .andExpect(status().isUnprocessableEntity()).andExpect(jsonPath("$.title").value("out_of_scope"));
+        mvc.perform(post("/api/workflows").contentType(MediaType.APPLICATION_JSON).header("X-Actor","Bindu Vallika").content("{\"scenario\":\"brownfield\",\"requirement\":\"Build a new URL shortener from scratch\"}"))
+                .andExpect(status().isUnprocessableEntity()).andExpect(jsonPath("$.title").value("scenario_mismatch"));
+    }
+    @Test void exposesOnlyCataloguedRepositoryArtifacts() throws Exception {
+        mvc.perform(get("/api/artifacts/architecture")).andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML)).andExpect(content().string(org.hamcrest.Matchers.containsString("Architecture and control flow")));
+        mvc.perform(get("/api/artifacts/not-approved")).andExpect(status().isNotFound()).andExpect(jsonPath("$.title").value("artifact_not_found"));
+    }
     @Test void replanIsCountedWithoutCreatingAnotherRun() throws Exception {
         var created=mvc.perform(post("/api/workflows").contentType(MediaType.APPLICATION_JSON).header("X-Actor","Bindu Vallika").content("{\"scenario\":\"ambiguous\",\"requirement\":\"Make links smart\"}")).andReturn();
         var createdJson=json.readTree(created.getResponse().getContentAsString());

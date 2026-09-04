@@ -14,7 +14,7 @@ cd C:\Users\bindu\Assignment-Agentic\agentic-url-shortener-java
 Confirm that the output contains:
 
 ```text
-Tests run: 10, Failures: 0, Errors: 0
+Tests run: 12, Failures: 0, Errors: 0
 BUILD SUCCESS
 ```
 
@@ -55,6 +55,8 @@ Build a secure URL shortener with custom aliases, expiration, visit analytics, a
 
 Do not enter a destination URL in this field. It expects a description of software that should be built or changed.
 
+If you accidentally enter an unrelated request such as `build a snake game`, the API rejects it with `out_of_scope`. Greenfield also rejects requests that clearly describe a modification to an existing system. This prevents the workflow from displaying convincing-looking evidence for work outside the URL-shortener assignment.
+
 Click **Launch agent workflow**.
 
 Say:
@@ -91,7 +93,7 @@ Scroll to **Agent Evidence**.
 Show that each completed step contains:
 
 - A typed result and concise summary
-- Generated artifact identifiers
+- Clickable links to allowlisted repository artifacts
 - Validation evidence
 - Risks
 - Retrieved grounding context
@@ -99,7 +101,9 @@ Show that each completed step contains:
 
 Say:
 
-> Agent output is treated as evidence requiring validation, not as automatically trusted text. Typed results and recorded risks make each stage reviewable and auditable.
+> Agent output is treated as evidence requiring validation, not as automatically trusted text. Each stage has a distinct responsibility. Its artifact links open real source, documentation, test reports, or coverage reports from this repository. QA reports test status from Maven Surefire instead of merely claiming that tests passed.
+
+Click at least one artifact link. Recommended examples are **Architecture decision**, **API integration tests**, and **Surefire test report**. Explain that the artifact endpoint is read-only and allowlisted; arbitrary filesystem paths cannot be requested.
 
 ## 5. Brownfield workflow
 
@@ -110,6 +114,8 @@ Enhance the existing URL shortener with expiring links and visit analytics witho
 ```
 
 Launch and execute the workflow.
+
+If this requirement is selected under Greenfield, the application rejects it with `scenario_mismatch` because it explicitly changes an existing service. Likewise, Brownfield rejects a request to build a new URL shortener from scratch.
 
 Say:
 
