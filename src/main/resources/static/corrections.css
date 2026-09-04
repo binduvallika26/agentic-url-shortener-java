@@ -6,6 +6,7 @@ textarea { margin-bottom: 6px; }
 #actor { margin: 8px 0 16px; }
 .run-guidance { color: var(--muted); font-size: 11px; line-height: 1.45; margin: 12px 0 0; }
 .artifact-link { color: var(--mint); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+.final-summary { border-color: var(--lime); background: rgba(191, 255, 89, .06); }
 .panel,
 .hero-card {
   background: linear-gradient(145deg, #142722, #091411);

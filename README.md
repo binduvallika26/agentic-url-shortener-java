@@ -36,14 +36,14 @@ The LangChain4j adapter then invokes the configured model. Do not commit keys. T
 .\scripts\test.ps1
 ```
 
-Current result: 12 tests, 0 failures; 80.0% instruction coverage and 55.9% branch coverage. Tests cover the real Spring/JPA/HTTP stack, redirect visit counting, URL policy, RAG retrieval, graph topology, ambiguity gates, scenario/scope validation, the artifact catalog, replanning metrics, synchronized release gates, and retry-to-fallback behavior.
+Current result: 16 tests, 0 failures; 87.7% instruction coverage and 65.4% branch coverage. Tests cover the real Spring/JPA/HTTP stack, redirect visit counting, expiry and private-network URL policy, RAG retrieval, graph topology, ambiguity gates, scenario/scope validation, the artifact catalog, accountable approvals, final summaries, replanning metrics, synchronized release, rollback, bounded retry/fallback, and safe-stop behavior.
 
 ## Demo sequence
 
 1. Open the dashboard and show the capability badge (`DEMO` or `CONNECTED`).
 2. Launch Greenfield, click **Execute ready agents**, and show the release approval stop.
-3. Inspect grounded agent evidence, risks, and links to real repository artifacts and test reports.
-4. Click **Approve waiting gate**, then execute again to finish.
+3. Inspect grounded agent evidence, propagated upstream context, risks, and links to real repository artifacts and test reports.
+4. Click **Approve waiting gate**, execute again, and show the consolidated final engineering summary.
 5. Click **Demo fallback**, launch, and execute to show two primary attempts plus fallback evidence.
 6. Create a short link and open it; show audit and metrics updates.
 7. Open Swagger and JaCoCo as API/test evidence.

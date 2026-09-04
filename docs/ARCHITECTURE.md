@@ -52,6 +52,9 @@ flowchart TD
 - **Local RAG:** deterministic evidence grounding without secrets. It is intentionally not described as vector search.
 - **Scenario and scope policy:** requirements outside the URL/link-service domain and clear Greenfield/Brownfield mismatches are rejected before a workflow is persisted.
 - **Evidence catalog:** stage outputs reference stable artifact IDs. A read-only allowlist maps those IDs to real repository files and generated Maven/JaCoCo reports without exposing arbitrary filesystem access.
+- **Cross-stage context:** each agent prompt includes the validated summaries from its declared dependency nodes; downstream execution therefore carries forward reviewed upstream decisions.
+- **Accountable decisions:** approve and rollback operations require both an identified reviewer and a non-empty reason. This is a prototype boundary, not a substitute for authenticated RBAC.
+- **Final summary and MTTR:** successful runs consolidate plan, rationale, artifacts, risks, validation, assumptions, and limitations, while reliability metrics expose mean time to recovery from recorded failure/recovery timestamps.
 
 ## Extension seams
 
@@ -64,4 +67,4 @@ flowchart TD
 
 ## Production limitations
 
-The prototype still needs authenticated RBAC, approval authorization, private/link-local DNS defenses, encrypted/tamper-evident audit storage, distributed workflow locking, idempotency keys, quotas and abuse controls, secrets management, model evaluation datasets, and production vector infrastructure.
+The prototype still needs authenticated RBAC, approval authorization, DNS resolution and rebinding defenses for hostname targets, encrypted/tamper-evident audit storage, distributed workflow locking, idempotency keys, quotas and abuse controls, secrets management, model evaluation datasets, and production vector infrastructure. Direct loopback, private, link-local, multicast, and cloud metadata IP destinations are rejected.

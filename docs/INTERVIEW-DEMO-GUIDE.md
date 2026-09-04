@@ -14,7 +14,7 @@ cd C:\Users\bindu\Assignment-Agentic\agentic-url-shortener-java
 Confirm that the output contains:
 
 ```text
-Tests run: 12, Failures: 0, Errors: 0
+Tests run: 16, Failures: 0, Errors: 0
 BUILD SUCCESS
 ```
 
@@ -86,6 +86,8 @@ Say:
 
 Click **Execute ready agents** again. Confirm that the run becomes `SUCCEEDED`.
 
+At the top of **Agent Evidence**, show the generated **Final Engineering Summary**. It consolidates the plan, rationale, artifacts, risks, validation, assumptions, and limitations required by the assignment.
+
 ## 4. Agent evidence
 
 Scroll to **Agent Evidence**.
@@ -102,6 +104,8 @@ Show that each completed step contains:
 Say:
 
 > Agent output is treated as evidence requiring validation, not as automatically trusted text. Each stage has a distinct responsibility. Its artifact links open real source, documentation, test reports, or coverage reports from this repository. QA reports test status from Maven Surefire instead of merely claiming that tests passed.
+
+Point out `upstream-context` in the evidence. Downstream stages receive the validated summaries of their declared dependencies, so Architecture consumes Requirements, QA consumes Development, and Release consumes QA, Security, and Documentation.
 
 Click at least one artifact link. Recommended examples are **Architecture decision**, **API integration tests**, and **Surefire test report**. Explain that the artifact endpoint is read-only and allowlisted; arbitrary filesystem paths cannot be requested.
 

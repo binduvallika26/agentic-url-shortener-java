@@ -19,18 +19,20 @@ public class LangChainEngineeringAgent implements AgentExecutor {
         if(step.id().equals("development")&&(run.getRequirement().contains("[simulate-development-failure]")||run.getRequirement().contains("[simulate-failure]")))throw new IllegalStateException("Simulated development provider failure");
         var retrieved=knowledge.retrieve(run.getRequirement()+" "+step.agent(),3);
         var context=retrieved.stream().map(c->c.id()+": "+c.text()).toList();
-        var prompt="You are the "+step.agent()+" agent. Requirement: "+run.getRequirement()+". Grounding: "+String.join(" ",context)+". Return a concise engineering outcome with validation evidence.";
+        var upstream=step.dependsOn().stream().map(run.getSteps()::get).filter(java.util.Objects::nonNull).map(WorkflowModels.StepState::getResult).filter(java.util.Objects::nonNull).map(WorkflowModels.AgentResult::summary).toList();
+        var prompt="You are the "+step.agent()+" agent. Requirement: "+run.getRequirement()+". Validated upstream outcomes: "+String.join(" ",upstream)+". Grounding: "+String.join(" ",context)+". Return a concise engineering outcome with validation evidence.";
         var generated=ai.generate(prompt);
         var summary=generated.orElseGet(()->localSummary(step,run));
         var evidence=new java.util.ArrayList<>(stageEvidence(step,run));
         evidence.add("grounded-chunks="+retrieved.size());
+        evidence.add("upstream-context="+upstream.size());
         evidence.add("agent="+step.agent());
         return new WorkflowModels.AgentResult(summary,artifacts(step),List.copyOf(evidence),risks(step),context,ai.mode());
     }
 
     private String localSummary(WorkflowModels.StepDefinition step,WorkflowModels.WorkflowRun run){
         return switch(step.id()){
-            case "requirements"->"Normalized stakeholder intent for the URL-shortener product. Acceptance criteria: create and resolve short links; preserve existing redirects for Brownfield changes; validate public HTTP(S) destinations; record visits and audited decisions; require human release approval.";
+            case "requirements"->requirementSummary(run);
             case "design"->"Mapped the requirement to the Spring API, LinkService, URL policy, JPA persistence, workflow graph, audit boundary, and explicit synchronization before release.";
             case "development"->"Identified the concrete implementation seam in LinkService and SecureUrlPolicy; repository source is attached as inspectable evidence rather than claiming a newly generated change.";
             case "security"->"Reviewed scheme and host validation, loopback rejection, expiration behavior, actor attribution, and change-control gates; production DNS rebinding and abuse controls remain documented risks.";
@@ -38,6 +40,19 @@ public class LangChainEngineeringAgent implements AgentExecutor {
             case "documentation"->"Attached the maintained README, architecture record, and interview guide as real repository artifacts.";
             default->"Synchronized QA, security, and documentation evidence. Release remains an accountable human decision and does not claim deployment occurred.";
         };
+    }
+
+    private String requirementSummary(WorkflowModels.WorkflowRun run){
+        var text=run.getRequirement().toLowerCase();
+        var criteria=new java.util.ArrayList<String>();
+        criteria.add("create and resolve short links");
+        if(text.contains("alias")||text.contains("custom"))criteria.add("support validated custom aliases");
+        if(text.contains("expir"))criteria.add("return HTTP 410 for expired links");
+        if(text.contains("analytic")||text.contains("visit"))criteria.add("persist visit analytics");
+        if(text.contains("audit"))criteria.add("record correlated audit events");
+        if(run.getScenario().equals("brownfield"))criteria.add("preserve existing redirect and API behavior");
+        criteria.add("require accountable human release approval");
+        return "Normalized "+run.getScenario()+" URL-shortener intent into "+criteria.size()+" acceptance criteria: "+String.join("; ",criteria)+".";
     }
 
     private String testSummary(){
